@@ -50,6 +50,7 @@ def text_process(text: str) -> str:
     no_stopwords = ' '.join([word for word in no_punc.split(' ') if word not in stopwords.words('english')])
     stemmed = ' '.join([PorterStemmer().stem(word) for word in no_stopwords.split(' ')])
 
+    #return no_stopwords
     return stemmed
 
 # discard irrelevant columns
@@ -59,7 +60,55 @@ df_txt = df[['rating','verified_reviews']]
 df_txt = df_txt[(df_txt['rating'] == 1) | (df_txt['rating'] == 5)]
 df_txt.groupby('rating').count().iloc[:,0]  # we have class imbalance
 
-from imblearn.over_sampling import SMOTE
+# apply the text_process function
+# df_txt['verified_reviews'] = df_txt['verified_reviews'].apply(text_process)
+# df_txt.head()
+
+
+
+
+from imblearn.over_sampling import SMOTE, SVMSMOTE
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from xgboost import XGBClassifier
+
+from sklearn.model_selection import train_test_split
+X = df_txt['verified_reviews']
+y = df_txt['rating']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=109)
+
+from imblearn.pipeline import make_pipeline
+pipeline = make_pipeline(CountVectorizer(analyzer=text_process),\
+                         TfidfTransformer(),\
+                         XGBClassifier(n_estimators=2000, learning_rate=0.05, colsample_bytree=0.7,subsample=0.8, gamma=2))
+
+# SMOTE(random_state=2431, sampling_strategy='all')
+#
+#RandomForestClassifier(n_estimators=1000, max_depth=5, random_state=101)
+
+pipeline.fit(X_train, y_train)
+pred = pipeline.predict(X_test)
+from sklearn.metrics import confusion_matrix, classification_report
+print(confusion_matrix(y_test, pred))
+print('\n')
+print(classification_report(y_test, pred))
+
+# ROC curve
+import sklearn.metrics as metrics
+fpr, tpr, threshold = metrics.roc_curve(y_test, pred, pos_label=1)
+roc_auc = metrics.auc(fpr,tpr)
+
+plt.title('ROC Curve')
+plt.plot(fpr, tpr, 'b', label=f'AUC = {roc_auc}')
+plt.legend(loc='lower right')
+plt.plot([0,1],[0,1], 'r--')
+plt.xlim([0,1])
+plt.ylim([0,1])
+plt.ylabel('True Positive Rate')
+plt.xlabel('False Positive Rate')
+plt.show()
 
 #TODO: 1. use SMOTE
 #      2. use train test split
