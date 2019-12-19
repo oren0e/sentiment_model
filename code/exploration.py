@@ -84,12 +84,12 @@ pipeline = make_pipeline(CountVectorizer(analyzer=text_process),\
                          TfidfTransformer(),\
                          XGBClassifier(n_estimators=2000, learning_rate=0.05, colsample_bytree=0.7,subsample=0.8, gamma=2))
 
-# SMOTE(random_state=2431, sampling_strategy='all')
-#
+# SMOTE(random_state=2431, sampling_strategy='all'),\
 #RandomForestClassifier(n_estimators=1000, max_depth=5, random_state=101)
 
 pipeline.fit(X_train, y_train)
 pred = pipeline.predict(X_test)
+probs = pipeline.predict_proba(X_test)
 from sklearn.metrics import confusion_matrix, classification_report
 print(confusion_matrix(y_test, pred))
 print('\n')
@@ -110,8 +110,3 @@ plt.ylabel('True Positive Rate')
 plt.xlabel('False Positive Rate')
 plt.show()
 
-#TODO: 1. use SMOTE
-#      2. use train test split
-#      3. run naivebayes model
-#      4. write a class for model
-#      5. build API
