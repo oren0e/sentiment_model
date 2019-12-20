@@ -21,4 +21,18 @@ class PredictSentiment(Resource):
         user_query = args['query']
 
         # make a prediction on user's query using the model pipeline
-        pred = model.predict()
+        pred = model.predict(np.array([user_query]))
+        pred_prob = model.predict_proba(np.array([user_query]))
+
+        # output negative or positive
+        if pred == 1:
+            pred_text = 'Positive'
+            confidence = round(pred_prob[1], 3)
+        else:
+            pred_text = 'Negative'
+            confidence = round(pred_prob[0], 3)
+
+        # create JSON
+        output = {'prediction': pred_text, 'confidence': confidence}
+
+        return output

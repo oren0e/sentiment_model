@@ -119,3 +119,4 @@ plt.ylabel('True Positive Rate')
 plt.xlabel('False Positive Rate')
 plt.show()
 
+# TODO: write code that finds the top words in each class (that help to predict)
