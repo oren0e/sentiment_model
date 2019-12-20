@@ -27,24 +27,23 @@ def text_process(text: str) -> str:
     return stemmed
 
 # discard irrelevant columns
-df_txt = df[['rating','verified_reviews']]
-
-# learn only from extreme cases - 1 or 5 ratings
-df_txt = df_txt[(df_txt['rating'] == 1) | (df_txt['rating'] == 5)]
+df_txt = df[['feedback','verified_reviews']]
 
 # train test split
 from sklearn.model_selection import train_test_split
 X = df_txt['verified_reviews']
-y = df_txt['rating']
+y = df_txt['feedback']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=109)
 
 # make a modeling pipeline
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from xgboost import XGBClassifier
+from imblearn.over_sampling import SMOTE
+from sklearn.linear_model import LogisticRegression
 from imblearn.pipeline import make_pipeline
 pipeline = make_pipeline(CountVectorizer(analyzer=text_process),\
                          TfidfTransformer(),\
-                         XGBClassifier(n_estimators=2000, learning_rate=0.05, colsample_bytree=0.7,subsample=0.8, gamma=2))
+                         SMOTE(random_state=2431, sampling_strategy='all'),\
+                         LogisticRegression(max_iter=1000))
 # train the model
 pipeline.fit(X_train, y_train)
 

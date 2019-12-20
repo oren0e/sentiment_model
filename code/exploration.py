@@ -30,6 +30,10 @@ df.groupby('rating').median().loc[:,'review_length']
 df.hist(column='review_length', by='rating', bins=30, edgecolor="black")
 plt.show()
 
+sns.heatmap(df.corr(), cmap='coolwarm', annot=True)  # feedback is our y!
+plt.tight_layout()
+plt.show()
+
 ## one case for example ##
 case = df['verified_reviews'][21]
 # 1. remove punctuation
@@ -53,12 +57,13 @@ def text_process(text: str) -> str:
     #return no_stopwords
     return stemmed
 
+
 # discard irrelevant columns
-df_txt = df[['rating','verified_reviews']]
+df_txt = df[['feedback','verified_reviews']]
 
 # learn only from extreme cases - 1 or 5 ratings
-df_txt = df_txt[(df_txt['rating'] == 1) | (df_txt['rating'] == 5)]
-df_txt.groupby('rating').count().iloc[:,0]  # we have class imbalance
+#df_txt = df_txt[(df_txt['rating'] == 1) | (df_txt['rating'] == 5)]
+df_txt.groupby('feedback').count().iloc[:,0]  # we have class imbalance
 
 # apply the text_process function
 # df_txt['verified_reviews'] = df_txt['verified_reviews'].apply(text_process)
@@ -76,16 +81,20 @@ from xgboost import XGBClassifier
 
 from sklearn.model_selection import train_test_split
 X = df_txt['verified_reviews']
-y = df_txt['rating']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=109)
+y = df_txt['feedback']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
 
 from imblearn.pipeline import make_pipeline
 pipeline = make_pipeline(CountVectorizer(analyzer=text_process),\
                          TfidfTransformer(),\
-                         XGBClassifier(n_estimators=2000, learning_rate=0.05, colsample_bytree=0.7,subsample=0.8, gamma=2))
+                         SMOTE(random_state=2431, sampling_strategy='all'),\
+                LogisticRegression(max_iter=1000))
 
+# TfidfTransformer(),\
+# XGBClassifier(n_estimators=2000, learning_rate=0.05, colsample_bytree=0.7,subsample=0.8, gamma=2)
 # SMOTE(random_state=2431, sampling_strategy='all'),\
-#RandomForestClassifier(n_estimators=1000, max_depth=5, random_state=101)
+# RandomForestClassifier(n_estimators=100, criterion='entropy')
+
 
 pipeline.fit(X_train, y_train)
 pred = pipeline.predict(X_test)
