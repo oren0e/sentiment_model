@@ -147,3 +147,6 @@ results/**
 **/*.idea
 *.zip
 *.gzip
+
+# settings file
+settings.yaml
