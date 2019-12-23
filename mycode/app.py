@@ -49,5 +49,7 @@ class PredictSentiment(Resource):
 # Route the resource to the URL
 api.add_resource(PredictSentiment, '/')
 
-if __name__ == '__main__':
-    app.run(debug=True)
+app.run(debug=True, use_reloader=False)
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
