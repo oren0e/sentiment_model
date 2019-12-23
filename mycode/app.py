@@ -2,12 +2,6 @@ from flask import Flask
 from flask_restful import reqparse, Api, Resource
 import pickle
 import numpy as np
-import yaml
-import sys
-
-# with open('../settings.yaml') as file:
-#     settings = yaml.full_load(file)
-# sys.path.append(settings['project_path'])
 
 from model import text_process
 
@@ -36,10 +30,10 @@ class PredictSentiment(Resource):
         # output negative or positive
         if pred == 1:
             pred_text = 'Positive'
-            confidence = round(pred_prob[1], 3)
+            confidence = round(pred_prob[0][1], 3)
         else:
             pred_text = 'Negative'
-            confidence = round(pred_prob[0], 3)
+            confidence = round(pred_prob[0][0], 3)
 
         # create JSON
         output = {'prediction': pred_text, 'confidence': confidence}
@@ -49,7 +43,5 @@ class PredictSentiment(Resource):
 # Route the resource to the URL
 api.add_resource(PredictSentiment, '/')
 
-app.run(debug=True, use_reloader=False)
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
