@@ -3,13 +3,13 @@ from flask_restful import reqparse, Api, Resource
 import pickle
 import numpy as np
 
-from model import text_process
+from mycode.model import text_process
 
 app = Flask(__name__)
 api = Api(app)
 
 # load the pickled model
-with open('../trained_models/SimpleSentimentClassifier.pkl', 'rb') as f:
+with open('./trained_models/SimpleSentimentClassifier.pkl', 'rb') as f:
     model1 = pickle.load(f)
 
 # argument parsing
@@ -44,4 +44,5 @@ class PredictSentiment(Resource):
 api.add_resource(PredictSentiment, '/')
 
 if __name__ == '__main__':
+    from mycode.model import text_process
     app.run(host='0.0.0.0')
