@@ -3,7 +3,7 @@
 This is a very simple sentiment NLP model which tries to classify a review as "positive" or "negative" and returns
 the confidence of its prediction as well. The model's performance is extremely poor and is heavily biased towards the "positive"
 prediction case. This is because the goal of this repo is rather technical: To demonstrate a model that was developed with
-Flask and deployed to AWS running on Docker image.    
+Python Flask and deployed to AWS running on Docker image.    
 The data for training this model came from the [Amazon Alexa Reviews](https://www.kaggle.com/sid321axn/amazon-alexa-reviews) dataset.
 
 ## Usage
