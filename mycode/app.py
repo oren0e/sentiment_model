@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restful import reqparse, Api, Resource
 import pickle
 import numpy as np
-import model
+from model import SimpleNLPModel
 
 
 app = Flask(__name__)
