@@ -1,5 +1,3 @@
-from zipfile import ZipFile
-import pandas as pd
 import string
 import nltk
 nltk.download('stopwords')
