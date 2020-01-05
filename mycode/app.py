@@ -2,19 +2,20 @@ from flask import Flask
 from flask_restful import reqparse, Api, Resource
 import pickle
 import numpy as np
+import model
 
-from mycode.model import text_process
 
 app = Flask(__name__)
 api = Api(app)
 
 # load the pickled model
-with open('./trained_models/SimpleSentimentClassifier.pkl', 'rb') as f:
+with open('../trained_models/SimpleSentimentClassifier.pkl', 'rb') as f:
     model1 = pickle.load(f)
 
 # argument parsing
 parser = reqparse.RequestParser()
 parser.add_argument('query')
+
 
 # Define a resource (what to do when a URL is accessed)
 class PredictSentiment(Resource):
@@ -44,5 +45,4 @@ class PredictSentiment(Resource):
 api.add_resource(PredictSentiment, '/')
 
 if __name__ == '__main__':
-    from mycode.model import text_process
     app.run(host='0.0.0.0')
