@@ -151,3 +151,4 @@ results/**
 # settings file
 settings.yaml
 *.json
+**/exploration.py
